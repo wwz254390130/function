@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>时间转换</title>
+</head>
+<body>
+  <script>   
+     //获取当前时间或时间转换
+     function getTime(data,YMD) {//YMD 格式为年月日 不传为年月日时分秒
+      if (data) {
+          var t = new Date(data)
+      } else {
+          var t = new Date()
+      }
+      var y = t.getFullYear();
+      var m = t.getMonth() + 1;
+      var d = t.getDate();
+      var h = t.getHours();
+      var mi = t.getMinutes();
+      var s = t.getSeconds();
+      m = m < 10 ? "0" + m : m;
+      d = d < 10 ? "0" + d : d;
+      h = h < 10 ? "0" + h : h;
+      mi = mi < 10 ? "0" + mi : mi;
+      s = s < 10 ? "0" + s : s;
+      if(YMD){
+        return y + "-" + m + "-" + d ;
+      }else{
+        return y + "-" + m + "-" + d + " " + h + ":" + mi + ":" + s;
+      }
+      
+  }
+         function Seconds(){//获取时间戳
+          var date = new Date();
+          var time =date.getTime();
+          return time
+        }
+       // //获取最近7天日期
+        // getDay(0); //当天日期
+        // getDay(-7); //7天前日期
+
+        // //获取最近3天日期
+        // getDay(0); //当天日期
+        // getDay(-3); //3天前日期
+        // console.log(getDay(0), getDay(3))
+
+        function getDay(day) {
+            var today = new Date();
+            var targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day;
+            today.setTime(targetday_milliseconds); //注意，这行是关键代码
+            var tYear = today.getFullYear();
+            var tMonth = today.getMonth() + 1;
+            var tDate = today.getDate();
+            tMonth = tMonth > 9 ? tMonth : '0' + tMonth;
+            tDate = tDate > 9 ? tDate : '0' + tDate;
+            return tYear + "-" + tMonth + "-" + tDate;
+        }
+           //比较两个时间  time1，time2均为日期类型    
+        //判断两个时间段是否相差 m 个月  
+        function completeDate(time1, time2, m) {
+            var diffyear = time2.getFullYear() - time1.getFullYear();
+            var diffmonth = diffyear * 12 + time2.getMonth() - time1.getMonth();
+            if (diffmonth < 0) {
+                return false;
+            }
+
+            var diffDay = time2.getDate() - time1.getDate();
+
+            if (diffmonth < m || (diffmonth == m && diffDay <= 0)) {
+
+                if (diffmonth == m && diffDay == 0) {
+                    var timeA = time1.getHours() * 3600 + 60 * time1.getMinutes() + time1.getSeconds();
+                    var timeB = time2.getHours() * 3600 + 60 * time2.getMinutes() + time2.getSeconds();
+                    if (timeB - timeA > 0) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+
+        //根据年份获取某月份有几天
+        function getNum(year, month) {
+            var temp;
+            month = parseInt(month, 10);
+            temp = new Date(year, month, 0);
+            return temp.getDate();
+        };
+        //获取时间戳
+        var startTimestamp = new Date(startTime).getTime();
+        var endTimestamp = new Date(endTime).getTime();
+
+        if (startTimestamp > endTimestamp) {
+            alert("起始日期应在结束日期之前");
+            return;
+        }
+
+        if ((endTimestamp - startTimestamp) > 7 * 24 * 60 * 60 * 1000) {
+            alert("时间段最长为一周");
+            return;
+        }
+  </script>
+</body>
+</html>

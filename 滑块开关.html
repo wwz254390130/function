@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .slider{
+      width: 75px;
+      height: 26px;
+      margin: 200px auto;
+      position: relative;
+      -moz-border-radius: 50px;
+      -webkit-border-radius: 50px;
+      border-radius: 50px;
+      background-color: #f57710;
+      -moz-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
+      -webkit-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
+      box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
+    }
+    .slider.bgc{
+      background-color: #ccc;
+    }
+    .slider-on{
+      position: absolute;
+      left: 10px;
+      line-height: 26px;
+      font-weight: bold;
+      z-index: 0;
+      color: #fff;
+    
+    }
+    .slider-off {
+      position: absolute;
+      right: 10px;
+      line-height: 26px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 1px 1px 0 rgba(255, 255, 255, .15);
+    }
+    .slider-current{
+      display: block;
+      position: absolute;
+      top: 3px;
+      width: 30px;
+      height: 20px;
+      z-index: 1;
+      background: #f1eff0;
+      -moz-border-radius:50px;
+      -webkit-border-radius:50px;
+      border-radius: 50px;
+      cursor: pointer;
+    }
+    .slider-current-3{
+      left: 3px;
+    }
+    .slider-current-40{
+      left: 42px;
+    }
+  </style>
+</head>
+<body>
+  <div id="slider"></div>
+    <!-- <div class="slider">
+        <span class="slider-on" data-type="on">有</span>
+        <span data-type="off" class="slider-off slider-current slider-current-40"></span>
+    </div> -->
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <script>
+// $('.slider').on('click','.slider-current',function(){
+//     var $parent= $(this).parents('.slider'),
+//         type =$(this).attr('data-type');
+//      if(type=='on'){  
+//       $(this).removeClass('slider-current slider-current-3').html('有');    
+//         $parent.find('.slider-off').addClass('slider-current slider-current-40').html('')   
+//        $parent.removeClass('bgc')   
+//      }else{ 
+//        $(this).removeClass('slider-current slider-current-40').html('无');          
+//           $parent.find('.slider-on').addClass('slider-current slider-current-3').html(''); 
+//             $parent.addClass('bgc')
+//      }  
+// })
+slider($('#slider'))
+function slider(ele){
+  ele.html(`<div class="slider">
+        <span class="slider-on" data-type="on">有</span>
+        <span data-type="off" class="slider-off slider-current slider-current-40"></span>
+    </div>`)
+    $('.slider').on('click','.slider-current',function(){
+    var $parent= $(this).parents('.slider'),
+        type =$(this).attr('data-type');
+     if(type=='on'){  
+      $(this).removeClass('slider-current slider-current-3').html('有');    
+        $parent.find('.slider-off').addClass('slider-current slider-current-40').html('')   
+       $parent.removeClass('bgc')   
+     }else{ 
+       $(this).removeClass('slider-current slider-current-40').html('无');          
+          $parent.find('.slider-on').addClass('slider-current slider-current-3').html(''); 
+            $parent.addClass('bgc')
+     }  
+})
+
+}
+
+  </script>
+</body>
+
+</html>

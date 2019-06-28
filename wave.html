@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>折线图</title>
+
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      li {
+        list-style: none;
+      }
+      .table-list {
+        display: flex;
+        width: 40%  ;
+        margin: 50px auto;
+        border-radius: 8px;
+        text-align: center;
+        background-color: #eeeeef;
+      }
+      .table-list li {
+        padding: 5px 20px;
+        width: 33.33%;  
+        cursor: pointer;
+      }
+      .btn-list {
+        display: flex;
+        width: 300px  ;
+        margin: 50px auto;
+        border-radius: 8px;
+        text-align: center;
+        background-color: #eeeeef;
+      }
+      .btn-list li {
+        padding: 5px 20px;
+        width: 25%;
+        cursor: pointer;
+      }
+      .btn-list li:nth-child(n + 2),
+      .table-list li:nth-child(n + 2) {
+        border-left: 1px solid #dadadc;
+      }
+      .btn-list .selected ,
+      .table-list .choose {
+        background-color: #fff;
+        border: 2px solid #ddddde;
+        border-radius: 10px;
+      }
+      .Chart {
+        display: none;
+        position: relative;
+        width: 580px;
+        height: 350px;
+        margin: 0 auto;
+      }
+
+      .Chart.t {
+        height: 700px;
+      }
+      .Chart .sing{
+        position: absolute;
+        top: 0;
+        left: 12%;
+        color: #878787;
+        font-size: 14px;
+      }
+      .g2-tooltip-box{
+        display: flex;
+        justify-content: space-between;
+      }
+      @media screen and (max-width:768px){
+        .btn-list{
+          width: 50%;
+          margin: 10px auto;
+        }
+        .btn-list li {
+        padding: .3rem  .2rem;
+     
+      }
+        .Chart{
+          width:auto;
+          height: auto;
+        }
+         .Chart.t {
+          height: auto;
+      }
+      .table-list{
+          width: 80%;       
+          margin: 10px auto;
+        }
+        .table-list li{
+         padding: 0.2rem .2rem;
+        font-size: .14rem;
+        overflow: hidden;
+        }
+        .table-list li:nth-child(1){
+          width: 30%;
+        }
+        .table-list li:nth-child(2){
+          width: 36%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+        <ul class="table-list">
+            <li  data-type="s">Speed</li>
+            <li data-type="_t">Temperature</li>
+            <li class="choose" data-type="_x">Frequency</li>
+          </ul>
+      <ul class="btn-list">
+        <li class="selected" data-type="_x">X</li>
+        <li data-type="_y">Y</li>
+        <li data-type="_z">Z</li>
+        <li data-type="_t">T</li>
+      </ul>
+      <div class="Chart">
+      <div  id="wave"></div>
+      <div class="sing">
+        <p>Waveform</p>
+        <p>(g)</p>
+      </div>
+      </div>
+      <div class="Chart" >
+      <div id="Spectrum"></div>
+      <div class="sing">
+          <p>Spectrum</p>
+          <p>(g)</p>
+      </div>
+       
+      </div>
+      <div class="Chart t" >
+      <div id="waveT"></div>
+        <p class="sing">temperature(℃)</p>
+      </div>
+    </div>
+    <script src="https://gw.alipayobjects.com/os/antv/pkg/_antv.g2-3.5.1/dist/g2.min.js"></script>
+    <script src="https://gw.alipayobjects.com/os/antv/assets/lib/jquery-3.2.1.min.js"></script>
+
+    <script>
+      var _wave = [],
+        _spectrum = [],
+        temperature = [],
+        i,
+        j
+      var pid = geturlString('pid')==true ? geturlString('pid') :'1903250253'
+      var $type = geturlString('type') ? geturlString('type') : '_x'
+      $('.btn-list')
+        .find('[data-type="' + $type + '"]')
+        .addClass('selected')
+        .siblings()
+        .removeClass('selected')
+        $('.table-list').find('[data-type="' + $type + '"]').addClass('choose').siblings().removeClass('choose')
+      var type = $('.btn-list .selected').attr('data-type')
+      var besUrl = '/api/v2/wave'
+      var http = 'http://192.168.58.60' + besUrl
+      var url_t =
+        'http://192.168.58.60/sgck-2k-pc-web/details/queryTrendMap.do?pumpId=190620144047643&startTime=2019%2F06%2F26+05%3A08%3A37&endTime=2019%2F06%2F26+17%3A32%3A18&queryStartTime=2019%2F06%2F26+05%3A08%3A37&queryEndTime=2019%2F06%2F26+17%3A32%3A18&dsid=190620144047643_1561012847648&userId=09312736&token=d1e4e65095f0434fb5a12da3869b5ac3'
+
+      function geturlString(name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
+        var r = window.location.search.substr(1).match(reg)
+        if (r != null) return decodeURI(r[2])
+        return null
+      }
+      $('.table-list li').on('click',function(){
+        $(this).addClass('choose').siblings().removeClass('choose')
+      var type = $(this).attr('data-type')
+      if(type=='s'){
+        window.location="./speed.html?pid="+pid+'&type='+type;
+      }else{
+        window.location="./wave.html?pid="+pid+'&type='+type; 
+      }
+       
+    })
+    getData(type)
+    function getData(type){
+      var url = type =='_t'?url_t:http + '?pid=' + pid + type;
+      $.ajax({
+          url: url ,
+          success: function(res) {
+            var arr = res.data
+            temperature = []
+            if(type =='_t'){
+              $('.Chart').hide()
+            $('.Chart.t').show()
+            for (i = 0; i < arr.t.length; i++) {
+              temperature.push({
+                t: arr.t[i],
+                time: getTime(arr.time[i])
+              })
+            }
+            waveTChart(temperature)
+            }else{
+              $('.Chart').show()
+            $('.Chart.t').hide()
+            var res = JSON.parse(res)
+            ;(_wave = []), (_spectrum = [])
+            var spectrum = res.result[0].spectrum, //频谱图
+              wave = res.result[0].wave //波形图
+            for (i = 0; i < spectrum.x.length; i++) {
+              _spectrum.push({
+                x: spectrum.x[i],
+                y: spectrum.y[i]
+              })
+            }
+            for (j = 0; j < wave.x.length; j++) {
+              _wave.push({
+                x: wave.x[j],
+                y: wave.y[j]
+              })
+            }
+            waveChart(_wave)
+            SpectrumChart(_spectrum)
+            }      
+          }
+        })
+    }
+
+      $('.btn-list li').on('click', function() {
+        var i = $(this).index()
+        $(this)
+          .addClass('selected')
+          .siblings()
+          .removeClass('selected')
+        type = $('.btn-list .selected').attr('data-type')
+        getData(type)
+      })
+      function SpectrumChart(data) {
+        $('#Spectrum').empty()
+        var chart = new G2.Chart({
+          container: 'Spectrum',
+          forceFit: true,
+          plotBackground: { stroke: '#ededed' },
+          height: 350,
+          padding: [50,'auto']
+        })
+        chart.source(data, {
+      
+          y: {
+            alias: 'amplitude',
+        
+          }
+        })
+        chart.tooltip({ 
+          containerTpl: '<div class="g2-tooltip">'
+        + '<div class="g2-tooltip-box"><span>frequency :</span><span><div class="g2-tooltip-title" style="margin-bottom: 4px;"></div>Hz</span></div>'
+        + '<ul class="g2-tooltip-list"></ul>'
+        + '</div>',
+        itemTpl: '<li data-index={index}>' + '{name}<span class="g2-tooltip-value">{value}g</span>'
+  + '</li>',
+  'g2-tooltip-title':{
+    display:'inline-block'
+  },
+  'g2-tooltip': {
+              position: 'absolute',
+              visibility: 'hidden',
+              backgroundColor: '#6f6f6f',
+              color: '#fff',
+              padding: '5px 15px',
+            }, 
+      }); 
+
+        chart
+          .interval()
+          .position('x*y')
+          .color('#485a7e')
+        chart.render()
+      }
+
+      function waveChart(data) {
+        $('#wave').empty()
+        var chart = new G2.Chart({
+          container: 'wave',
+          forceFit: true,
+          plotBackground: { stroke: '#ededed' },
+          height:350,
+          padding: [50,'auto']
+        })
+
+        chart.source(data, {
+          y: {
+            alias: 'Acceleration'
+ 
+          }
+        })
+      chart.tooltip({
+        showTitle:false, 
+        itemTpl: '<li data-index={index}>' + '{name}: {value}g'  + '</li>',
+        'g2-tooltip': {
+              position: 'absolute',
+              visibility: 'hidden',
+              backgroundColor: '#6f6f6f',
+              color: '#fff',
+              padding: '5px 15px',
+            }, 
+      });
+        chart
+          .line()
+          .position('x*y')
+          .color('#485a7e')      
+        chart.render()
+      }
+
+      
+      function waveTChart(data) {
+        $('#waveT').empty()
+        var chart = new G2.Chart({
+          container: 'waveT',
+          forceFit: true,
+          plotBackground: { stroke: '#ededed' },
+          // height: 700,
+          padding: [50,'auto']
+        })
+        chart.source(data,{
+          time: {
+        type: 'time',
+        tickCount: 10,
+        mask: 'YYYY/MM/DD H:mm'
+      },
+      t: {
+          alias: 'temperature',   
+        }
+        })
+        
+
+        chart
+          .line()
+          .position('time*t')
+          .color('#5ad784')
+        chart.render()
+      }
+      //获取当前时间或时间转换
+      function getTime(data) {
+        //YMD 格式为年月日 不传为年月日时分秒
+        var t = new Date(data)
+        var y = t.getFullYear()
+        var m = t.getMonth() + 1
+        var d = t.getDate()
+        var h = t.getHours()
+        var mi = t.getMinutes()
+        var s = t.getSeconds()
+        m = m < 10 ? '0' + m : m
+        d = d < 10 ? '0' + d : d
+        h = h < 10 ? '0' + h : h
+        mi = mi < 10 ? '0' + mi : mi
+        s = s < 10 ? '0' + s : s
+    return y + "/" + m + "/" + d + " " + h + ":" + mi + ":" + s;
+      }
+    </script>
+  </body>
+</html>
