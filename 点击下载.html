@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <ul id="inputUpload">
+    <li>
+      <a href="" class="fileDownload"></a>
+    </li>
+  </ul>
+  <script>
+  //图片点击下载
+$('#inputUpload').on('click', '.fileDownload', function () {
+    var $filename = $('.fileDownload').text().substring($('.fileDownload').text().lastIndexOf('/') + 1);
+    console.log($filename);
+    if (!!window.ActiveXObject || "ActiveXObject" in window) {
+        downloadImg(href, $filename);
+    } else {
+        fileDownloadImg(href, $filename);
+    }
+});
+
+// 图片下载对象
+var downloadedImg = null;
+// 待下载文件名
+/**
+ * base64下载图片（可跨域）
+ * @param {*} img
+ * @param {String} filename 文件名
+ */
+function downloadImg(imgUrl, filename) {
+    //ie图片点击下载
+    fileName = filename;
+    startDownloadImg(imgUrl, getImgDataUrl);
+}
+
+/**
+ * 开始下载图片之前
+ * @param {String} imgUrl
+ * @param {Function} callback
+ */
+function startDownloadImg(imgUrl, callback) {
+    var imageURL = imgUrl;
+    downloadedImg = new Image();
+    downloadedImg.crossOrigin = 'Anonymous';
+    downloadedImg.src = imageURL;
+    downloadedImg.addEventListener('load', callback, false);
+}
+
+/**
+ * 获取图片下载base64字符串
+ * @param {DOMimg} domimg
+ */
+function getImgDataUrl() {
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    var width = downloadedImg.width || downloadedImg.naturalWidth;
+    var height = downloadedImg.height || downloadedImg.naturalHeight;
+    var imgSrc = downloadedImg.src;
+    var type = imgSrc.substring(imgSrc.lastIndexOf('.') + 1);
+    var dtype = type === 'jpg' ? 'jpeg' : 'png';
+    canvas.width = width;
+    canvas.height = height;
+    context.drawImage(downloadedImg, 0, 0);
+
+    imatateDownloadByA(canvas.toDataURL('image/' + dtype));
+}
+
+/**
+ * 通过a标签模拟下载
+ * @param {String} href
+ * @param {String} filename
+ */
+function imatateDownloadByA(href) {
+    var a = document.createElement('a');
+    a.download = '';
+    a.style.display = 'none';
+    a.href = href;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(href);
+}
+
+function fileDownloadImg(url, filename) {
+    //图片点击下载不兼容ie
+    var src = url;
+    var canvas = document.createElement('canvas');
+    var img = document.createElement('img');
+    img.onload = function (e) {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var context = canvas.getContext('2d');
+        context.drawImage(img, 0, 0, img.width, img.height);
+        canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
+        canvas.toBlob(function (blob) {
+            var a = document.createElement('a');
+            a.href = window.URL.createObjectURL(blob);
+            a.download = filename;
+            a.click();
+        }, "image/jpeg");
+    };
+    img.setAttribute("crossOrigin", 'Anonymous');
+    img.src = src;
+}
+
+
+  </script>
+</body>
+</html>
