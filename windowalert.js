@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 /**
  * @desc windowalert v1.1 这是一个简单的弹窗组件，用户只需要引入这个js就可以直接使用，无需另外引入css或图片
  * @author cifer
@@ -495,7 +495,6 @@ var windowalert = {
 };
 // module.exports = windowalert;
 
-=======
 /**
  * @desc windowalert v1.1 这是一个简单的弹窗组件，用户只需要引入这个js就可以直接使用，无需另外引入css或图片
  * @author cifer
@@ -990,5 +989,3 @@ var windowalert = {
     }
 };
 module.exports = windowalert;
-
->>>>>>> ec32e4c9bb51809a885b426e21a0b3fb59a27e32
