@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="btn">点击</div>
+<script src="./jquery.js"></script>
+<script src="./windowalert.js"></script>
+<script>
+  // 弹框使用
+  $('#btn').on('click',function(){
+    var alertConter = '<form class="add form-hand text-left" id="confirmFrom" ><h2 style="font-size:16px;margin-bottom:15px;text-align:center;">提示</h2>'
+        alertConter += '<div>请确认是否删除该文件？</div></form>';
+        addWindow(alertConter, confirmAlert);
+  })
+ function confirmAlert(){
+    console.log('确认')
+ }
+
+  // 弹出框
+function addWindow(alertContent, func) {
+  windowalert.simple({
+        content: alertContent,
+        alertWidth: 400,
+        alertHeight: undefined,
+        backgroundColor: '#fff',
+        color: '#333',
+        buttonEvent: [{
+            value: '确认',
+            backgroundColor: '#03A1E8',
+            callbackEvent: function callbackEvent(e) {
+                func();
+            }
+        }, {
+            value: '取消',
+            backgroundColor: '#999',
+            callbackEvent: function callbackEvent() {
+              windowalert.hideWindowalert();
+            }
+        }]
+    });
+}
+//提示弹窗
+function alertView(msg, succOrerr, time) {
+    var colorObj = succOrerr == 'success' ? { bcolor: '#dff0d8', fcolor: '#3c763d' } : { bcolor: '#f2dede', fcolor: '#a94442' };
+    windowalert.popup({
+        content: msg,
+        alertWidth: 400,
+        alertHeight: undefined,
+        backgroundColor: colorObj.bcolor,
+        color: colorObj.fcolor,
+        time: time,
+        rate: 500
+    });
+}
+</script>
+</body>
+</html>

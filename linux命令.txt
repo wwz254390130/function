@@ -1,0 +1,21 @@
+创建文件夹 mkdir 文件夹名               创建文件 tounch文件名 
+
+删除 文件 rm 文件名                删除 文件夹 rm -r 文件夹名 
+
+查看当前文件路径 pwd            查看当前文件目录下的 所有文件 ls     查看权限所属  ll
+
+返回上一级 目录 cd ./ 或 cd -         返回根目录 cd  /              
+
+上传文件 rz  需要安装相关软件
+
+移动文件 sudo mv  -i 文件名  指定路径
+
+将文件wch.txt重命名为wjz.doc      mv wch.txt wjz.doc
+　　
+复制文件 cp                复制一个文件到另一个位置  sudo cp -r 文件名   指定的路径
+
+复制一个目录下所有的文件 到指定 位置  sudo cp -rf 目录名/*  指定路径
+
+sudo 指定用户的执行命令     提高权限 sudo     sudo -1 目前用户的权限   
+
+Cogobuy后台正式服务 10.1.0.36 路径 /var/www/co/        Ez cogobuy后台系统192.168.0.51  路径 /work/resource/co/
