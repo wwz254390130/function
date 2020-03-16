@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+<script>
+    /* 文件流下载 需要后台返回文件流 并且对中文进行处理
+     *下载文件
+     * options:{
+     *      url:'',  //下载地址
+     *      isNewWinOpen:false,是否新窗口打开
+     *      data:{name:value}, //要发送的数据
+     *      method:'post'
+     * }
+     */
+     function downLoadFile(url, data, method, isNewWinOpen) {
+        var config = {
+            url: url,
+            data: (data = data || {}),
+            method: (method = method || "GET"),
+            isNewWinOpen: (isNewWinOpen = isNewWinOpen || false)
+        };
+        var $iframe = $('<div style="display: none"><iframe id="down-file-iframe" name="down-file-iframe" /></div>');
+        var $form = $('<form target="down-file-iframe" method="' + config.method + '" action="' + config.url + '" />');
+        if (config.isNewWinOpen) {
+            $form.attr("target", "_blank");
+        }
+        /*拼接参数*/
+        for (var key in config.data) {
+            $form.append('<input type="hidden" name="' + key + '" value="' + config.data[key] + '" />');
+        }
+        $iframe.append($form);
+        $(document.body).append($iframe);
+        $form.submit();
+        setTimeout(function () {
+            $iframe.remove();
+        }, 1000)
+    }
+      /* 文件流下载
+     *下载文件 对下载的data参数进行转换成 用window.open 下载 
+     *  坏处会打开一个新窗口
+     */
+    function downFile(url,data){
+    var _url = _url;
+        Object.keys(data).forEach(function (key) {
+            _url = changeURLArg(_url, key, data[key]);
+        });
+        window.open(_url)
+ }
+//url处理
+function changeURLArg(url, arg, arg_val) {
+    var pattern = arg + '=([^&]*)';
+    var replaceText = arg + '=' + arg_val;
+    if (url.match(pattern)) {
+        var tmp = '/(' + arg + '=)([^&]*)/gi';
+        tmp = url.replace(eval(tmp), replaceText);
+        return tmp;
+    } else {
+        if (url.match('[\?]')) {
+            return url + '&' + replaceText;
+        } else {
+            return url + '?' + replaceText;
+        }
+    }
+    return url + '\n' + arg + '\n' + arg_val;
+};
+
+//防止favicon.ico:自动下载报错
+var $link = '<link rel="shortcut icon" href="#" />'
+$('head').append($link)
+
+//图片点击下载
+$('#inputUpload').on('click', '.fileDownload', function() {
+    var $filename = $('.fileDownload').text().substring($('.fileDownload').text().lastIndexOf('/') + 1);
+    if (!!window.ActiveXObject || ("ActiveXObject" in window)) {//判断是不是ie
+        downloadImg(href, $filename);
+    } else {
+        fileDownloadImg(href, $filename)
+    }
+})
+
+// 图片下载对象
+var downloadedImg = null
+    // 待下载文件名
+    /**
+     * base64下载图片（可跨域）
+     * @param {*} img
+     * @param {String} filename 文件名
+     */
+function downloadImg(imgUrl, filename) { //ie图片点击下载
+    fileName = filename
+    startDownloadImg(imgUrl, getImgDataUrl)
+}
+
+/**
+ * 开始下载图片之前
+ * @param {String} imgUrl
+ * @param {Function} callback
+ */
+function startDownloadImg(imgUrl, callback) {
+    var imageURL = imgUrl
+    downloadedImg = new Image()
+    downloadedImg.crossOrigin = 'Anonymous'
+    downloadedImg.src = imageURL
+    downloadedImg.addEventListener('load', callback, false)
+}
+
+/**
+ * 获取图片下载base64字符串
+ * @param {DOMimg} domimg
+ */
+function getImgDataUrl() {
+    var canvas = document.createElement('canvas')
+    var context = canvas.getContext('2d')
+    var width = downloadedImg.width || downloadedImg.naturalWidth
+    var height = downloadedImg.height || downloadedImg.naturalHeight
+    var imgSrc = downloadedImg.src
+    var type = imgSrc.substring(imgSrc.lastIndexOf('.') + 1)
+    var dtype = type === 'jpg' ? 'jpeg' : 'png'
+    canvas.width = width
+    canvas.height = height
+    context.drawImage(downloadedImg, 0, 0)
+
+    imatateDownloadByA(canvas.toDataURL(`image/${dtype}`))
+}
+
+/**
+ * 通过a标签模拟下载
+ * @param {String} href
+ * @param {String} filename
+ */
+function imatateDownloadByA(href) {
+    var a = document.createElement('a')
+    a.download = '';
+    a.style.display = 'none'
+    a.href = href
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    window.URL.revokeObjectURL(href)
+}
+
+function fileDownloadImg(url, filename) { //图片点击下载不兼容ie
+    var src = url;
+    var canvas = document.createElement('canvas');
+    var img = document.createElement('img');
+    img.onload = function(e) {
+        canvas.width = img.width;
+        canvas.height = img.height
+        var context = canvas.getContext('2d');
+        context.drawImage(img, 0, 0, img.width, img.height);
+        canvas.getContext('2d').drawImage(img, 0, 0, img.width, img.height);
+        canvas.toBlob((blob) => {
+            var a = document.createElement('a');
+            a.href = window.URL.createObjectURL(blob);
+            a.download = filename;
+            a.click();
+        }, "image/jpeg");
+    }
+    img.setAttribute("crossOrigin", 'Anonymous');
+    img.src = src;
+}
+</script>
+</body>
+</html>
